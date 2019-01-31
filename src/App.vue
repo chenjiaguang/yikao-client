@@ -1,31 +1,50 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
+<script>
+export default {
+  name: 'app'
+}
+</script>
+
 <style>
+@import url('./assets/style/normalize.css');
+body{
+  overflow-x: hidden;
+}
 #app {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: visible;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  color: #333;
 }
-#nav {
-  padding: 30px;
+.cursor-pointer{
+  cursor: pointer;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.clearfix{
+  overflow: hidden;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.clearfix:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+h1,h2,h3,h4,h5,h6,p{
+  padding: 0;
+  margin: 0;
 }
 </style>

@@ -1,6 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+const Home = () => import('./views/Home.vue')
+const Enroll = () => import('./views/Enroll.vue')
+const Dynamic = () => import('./views/Dynamic.vue')
+const Training = () => import('./views/Training.vue')
+const Race = () => import('./views/Race.vue')
+const Perform = () => import('./views/Perform.vue')
+const Book = () => import('./views/Book.vue')
+const Us = () => import('./views/Us.vue')
 
 Vue.use(Router)
 
@@ -10,16 +17,43 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: Home
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/enroll',
+      name: 'Enroll',
+      component: Enroll
+    },
+    {
+      path: '/dynamic',
+      name: 'Dynamic',
+      component: Dynamic
+    },
+    {
+      path: '/training',
+      name: 'Training',
+      component: Training
+    },
+    {
+      path: '/race',
+      name: 'Race',
+      component: Race
+    },
+    {
+      path: '/perform',
+      name: 'Perform',
+      component: Perform
+    },
+    {
+      path: '/book',
+      name: 'Book',
+      component: Book
+    },
+    {
+      path: '/us',
+      name: 'Us',
+      component: Us
     }
   ]
 })
