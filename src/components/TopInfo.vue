@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import utils from '../lib/utils'
+
 export default {
   props: {
     height: {
@@ -31,14 +33,29 @@ export default {
       username: ''
     }
   },
+  mounted () {
+    if (window.localStorage.username && window.localStorage.token) {
+      this.username = window.localStorage.username
+    } else {
+      this.username = ''
+    }
+  },
   methods: {
     loginClick: function () {
       console.log('loginClick')
-      this.username = '陈加尧'
+      console.log(this.$route)
+      window.localStorage.loginBack = this.$route.path
+      this.$router.replace({ path: '/login' })
+      return false
     },
     logoutClick: function () {
       console.log('logoutClick')
       this.username = ''
+      window.localStorage.token = ''
+      window.localStorage.username = ''
+      if (this.$route.meta.requiredLogin) {
+        utils.goLogin()
+      }
     },
     attendClick: function () {
       console.log('attendClick')

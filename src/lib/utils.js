@@ -277,5 +277,9 @@ export default {
         }
       })
     })
+  },
+  goLogin: function () {
+    window.localStorage.loginBack = router.history.current.path
+    router.replace({ path: '/login' })
   }
 }

@@ -83,16 +83,7 @@ export default {
       rightCates: mockData.rightCates
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic },
-  mounted: function () {
-    let rData = {
-      username: 'test',
-      password: '123456'
-    }
-    this.$ajax('/login', { data: rData }).then(res => {
-      console.log('res', res)
-    })
-  }
+  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic }
 }
 </script>
 

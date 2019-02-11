@@ -1,6 +1,6 @@
 <template>
   <div class="c-top-bar clearfix">
-    <div v-for="(button, idx) in buttons" :class="{button: true, fl: true, first: idx === 0, 'cursor-pointer': true, actived: actived === button.name}" :key="button.name" @click.stop="buttonClick(idx, button)">{{button.label}}</div>
+    <div v-for="(button, idx) in buttons" :class="{button: true, fl: true, first: idx === 0, 'cursor-pointer': true, actived: button.link === '/' ? ($route.path === button.link) : ($route.path.indexOf(button.link) !== -1)}" :key="button.name" @click.stop="buttonClick(idx, button)">{{button.label}}</div>
   </div>
 </template>
 
@@ -8,7 +8,6 @@
 export default {
   data () {
     return {
-      actived: 'Home',
       buttons: [
         {
           name: 'Home',
@@ -53,15 +52,10 @@ export default {
       ]
     }
   },
-  mounted: function () {
-    console.log('mounted', this.$route)
-    this.actived = this.$route.name
-  },
   methods: {
     buttonClick: function (idx, button) {
       console.log('buttonClick', idx, button)
       this.$router.replace({ name: button.name })
-      // this.actived = button.name
     }
   }
 }

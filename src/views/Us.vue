@@ -13,9 +13,7 @@
 import TopInfo from '../components/TopInfo'
 import TopBar from '../components/TopBar'
 import BottomInfo from '../components/BottomInfo'
-import BlockHead from '../components/BlockHead'
 import SubNav from '../components/SubNav'
-import Pagination from '../components/Pagination'
 
 export default {
   data () {
@@ -23,7 +21,7 @@ export default {
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Us', label: '关于我们', link: '/us' }]
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, SubNav, Pagination }
+  components: { TopInfo, TopBar, BottomInfo, SubNav }
 }
 </script>
 
