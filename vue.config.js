@@ -3,6 +3,8 @@ module.exports = {
   // 选项...
   assetsDir: 'assets',
   devServer: {
-    proxy: 'http://artadmintest.cn'
+    https: true,
+    disableHostCheck: true,
+    proxy: 'https://artminitest.fantuan.cn'
   }
 }
