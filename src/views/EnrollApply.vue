@@ -4,7 +4,7 @@
       <div class="form-box avatar-box clearfix">
         <div class="avatar-title required-title fl clearfix"><i class="ykfont yk-required fl"></i><span class="fl">考生照片：</span></div>
         <div class="avatar-image fl" :style="{backgroundImage: 'url(' + (form.avatar.url ? form.avatar.url : defaultAvatar) + ')'}">
-          <div v-show="form.avatar.uploading || form.avatar.uploadError" class="image-tip" style="line-height:227px">{{form.avatar.tip}}</div>
+          <div v-show="form.avatar.uploading || form.avatar.uploadError" class="image-tip" style="line-height:227px">{{form.avatar.uploadTip}}</div>
         </div>
         <div class="avatar-state fl">
           <div class="state-text">
@@ -39,11 +39,11 @@
       <div class="form-box clearfix">
         <div class="required-title fl clearfix"><i class="ykfont yk-required fl"></i><span class="fl">性别：</span></div>
         <label class="gender-label cursor-pointer fl clearfix">
-          <input type="radio" class="gender-radio cursor-pointer fl" value="1" v-model="form.gender.value" />
+          <input type="radio" class="gender-radio cursor-pointer fl" value="1" v-model="form.gender.value" @change="genderChange" />
           <span class="fl">男</span>
         </label>
         <label class="gender-label cursor-pointer fl clearfix">
-          <input type="radio" class="gender-radio cursor-pointer fl" value="2" v-model="form.gender.value" />
+          <input type="radio" class="gender-radio cursor-pointer fl" value="2" v-model="form.gender.value" @change="genderChange" />
           <span class="fl">女</span>
         </label>
       </div>
@@ -166,7 +166,7 @@
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">上传专业证书：</span></div>
         <div class="clearfix">
           <div class="certificate-image-box fl" :style="{backgroundImage: form.majorcertificate.url ? ('url(' + form.majorcertificate.url + ')') : 'none'}">
-            <div v-show="form.majorcertificate.uploading || form.majorcertificate.uploadError" class="image-tip" style="line-height:227px">{{form.majorcertificate.tip}}</div>
+            <div v-show="form.majorcertificate.uploading || form.majorcertificate.uploadError" class="image-tip" style="line-height:227px">{{form.majorcertificate.uploadTip}}</div>
           </div>
           <el-upload
             class="fl"
@@ -190,7 +190,7 @@
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">上传基本乐科证书：</span></div>
         <div class="clearfix">
           <div class="certificate-image-box fl" :style="{backgroundImage: form.basicmusiccertificate.url ? ('url(' + form.basicmusiccertificate.url + ')') : 'none'}">
-            <div v-show="form.basicmusiccertificate.uploading || form.basicmusiccertificate.uploadError" class="image-tip" style="line-height:227px">{{form.basicmusiccertificate.tip}}</div>
+            <div v-show="form.basicmusiccertificate.uploading || form.basicmusiccertificate.uploadError" class="image-tip" style="line-height:227px">{{form.basicmusiccertificate.uploadTip}}</div>
           </div>
           <el-upload
             class="fl"
@@ -251,7 +251,7 @@
       </div>
       <div class="buttons-box clearfix">
         <div class="save-button cursor-pointer fl">保存</div>
-        <div class="submit-button cursor-pointer fr">提交</div>
+        <div class="submit-button cursor-pointer fr" @click.stop="submitTap">提交</div>
       </div>
     </div>
   </div>
@@ -311,10 +311,11 @@ export default {
           valid: false,
           url: '',
           id: '',
-          tip: '',
+          tip: '请上传照片',
           upload_data: {},
           uploading: false,
-          uploadError: false
+          uploadError: false,
+          uploadTip: ''
         },
         name: {
           required: true,
@@ -419,10 +420,10 @@ export default {
           valid: false,
           url: '',
           id: '',
-          tip: '',
+          tip: '请上传专业证书',
           uploading: false,
           uploadError: false,
-          uploadingText: ''
+          uploadTip: ''
         },
         basicmusiccertificate: { // 基本乐科证书
           upload_data: {},
@@ -430,11 +431,11 @@ export default {
           required: false,
           valid: false,
           url: '',
-          id: '',
+          id: '请上传基本乐科证书',
           tip: '',
           uploading: false,
           uploadError: false,
-          uploadingText: ''
+          uploadTip: ''
         },
         bent1: { // 曲目1
           required: true,
@@ -560,35 +561,35 @@ export default {
       if (type === 'avatar') {
         this.form.avatar.uploading = true
         this.form.avatar.uploadError = false
-        this.form.avatar.tip = '正在上传...'
+        this.form.avatar.uploadTip = '正在上传...'
         this.form.avatar.url = URL.createObjectURL(upload.file)
       } else if (type === 'majorcertificate') {
         this.form.majorcertificate.uploading = true
         this.form.majorcertificate.uploadError = false
-        this.form.majorcertificate.tip = '正在上传...'
+        this.form.majorcertificate.uploadTip = '正在上传...'
         this.form.majorcertificate.url = URL.createObjectURL(upload.file)
       } else if (type === 'basicmusiccertificate') {
         this.form.basicmusiccertificate.uploading = true
         this.form.basicmusiccertificate.uploadError = false
-        this.form.basicmusiccertificate.tip = '正在上传...'
+        this.form.basicmusiccertificate.uploadTip = '正在上传...'
         this.form.basicmusiccertificate.url = URL.createObjectURL(upload.file)
       }
       axios.post('/upload', formData, config).then(res => {
         console.log('uploadSuccess', res)
         if (type === 'avatar') {
-          this.form.avatar.tip = ''
+          this.form.avatar.uploadTip = ''
           this.form.avatar.uploading = false
           this.form.avatar.id = res.data.imageId
           this.form.avatar.valid = true
           // this.form.avatar.url = res.data.url
         } else if (type === 'majorcertificate') {
-          this.form.majorcertificate.tip = ''
+          this.form.majorcertificate.uploadTip = ''
           this.form.majorcertificate.uploading = false
           this.form.majorcertificate.id = res.data.imageId
           this.form.majorcertificate.valid = true
           // this.form.majorcertificate.url = res.data.url
         } else if (type === 'basicmusiccertificate') {
-          this.form.basicmusiccertificate.tip = ''
+          this.form.basicmusiccertificate.uploadTip = ''
           this.form.basicmusiccertificate.uploading = false
           this.form.basicmusiccertificate.id = res.data.imageId
           this.form.basicmusiccertificate.valid = true
@@ -599,19 +600,19 @@ export default {
           this.form.avatar.uploading = false
           this.form.avatar.uploadError = true
           this.form.avatar.id = ''
-          this.form.avatar.tip = '上传失败！'
+          this.form.avatar.uploadTip = '上传失败！'
           this.form.avatar.valid = false
         } else if (type === 'majorcertificate') {
           this.form.majorcertificate.uploading = false
           this.form.majorcertificate.uploadError = true
           this.form.majorcertificate.id = ''
-          this.form.majorcertificate.tip = '上传失败！'
+          this.form.majorcertificate.uploadTip = '上传失败！'
           this.form.majorcertificate.valid = false
         } else if (type === 'basicmusiccertificate') {
           this.form.basicmusiccertificate.uploading = false
           this.form.basicmusiccertificate.uploadError = true
           this.form.basicmusiccertificate.id = ''
-          this.form.basicmusiccertificate.tip = '上传失败！'
+          this.form.basicmusiccertificate.uploadTip = '上传失败！'
           this.form.basicmusiccertificate.valid = false
         }
         console.log(err)
@@ -752,6 +753,7 @@ export default {
           needBasicMusicCer = true
         }
         this.continuitys = continuitys
+        this.form.continuity.required = Boolean(continuitys && continuitys[0])
         this.form.continuity.value = ''
         this.form.continuity.text = ''
         this.form.continuity.valid = false
@@ -770,13 +772,49 @@ export default {
         let selected = this.years.filter(item => item.value === value)[0]
         this.form.lastgetcertificate.year.value = selected.value
         this.form.lastgetcertificate.year.text = selected.text
-        this.form.lastgetcertificate.year.text = true
+        this.form.lastgetcertificate.year.valid = true
       } else if (type === 'lastgetmonth') { // 最近一次获得同专业考级证书月份
         let selected = this.months.filter(item => item.value === value)[0]
         this.form.lastgetcertificate.month.value = selected.value
         this.form.lastgetcertificate.month.text = selected.text
-        this.form.lastgetcertificate.month.text = true
+        this.form.lastgetcertificate.month.valid = true
       }
+    },
+    genderChange: function (value) {
+      console.log('genderChange', value)
+      this.form.gender.valid = Boolean(value)
+    },
+    getFormData: function () {
+      let form = JSON.parse(JSON.stringify(this.form))
+      for (let key in form) {
+        console.log('key', key)
+        if (key === 'lastgetcertificate') { // 最近一次获得同专业考级证书
+          if (!form.lastgetcertificate.year.valid) {
+            // this.scrollToBlock(key)
+            if (form.lastgetcertificate.year.tip) {
+              this.$toast(form.lastgetcertificate.year.tip)
+            }
+            break
+          } else if (!form.lastgetcertificate.month.valid) {
+            // this.scrollToBlock(key)
+            if (form.lastgetcertificate.month.tip) {
+              this.$toast(form.lastgetcertificate.month.tip)
+            }
+            break
+          }
+        } else {
+          if (form[key].required && !form[key].valid) { // 必填且无效
+            // this.scrollToBlock(key)
+            if (form[key].tip) {
+              this.$toast(form[key].tip)
+            }
+            break
+          }
+        }
+      }
+    },
+    submitTap: function () {
+      this.getFormData()
     }
   }
 }
