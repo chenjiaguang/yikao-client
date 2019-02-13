@@ -212,36 +212,36 @@
       </div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">考试曲目1：</span></div>
-        <input class="full-input" v-model="form.bent1.value" placeholder="请输入考试曲目" />
+        <input class="full-input" v-model="form.bent1.value" placeholder="请输入考试曲目" @change="e => inputChange('bent1', e)" />
       </div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">考试曲目2：</span></div>
-        <input class="full-input" v-model="form.bent2.value" placeholder="请输入考试曲目" />
+        <input class="full-input" v-model="form.bent2.value" placeholder="请输入考试曲目" @change="e => inputChange('bent2', e)" />
       </div>
       <div class="form-box">
         <div class="required-title"><span>考试曲目3：</span></div>
-        <input class="full-input" v-model="form.bent3.value" placeholder="请输入考试曲目" />
+        <input class="full-input" v-model="form.bent3.value" placeholder="请输入考试曲目" @change="e => inputChange('bent3', e)" />
       </div>
       <div class="form-box">
         <div class="required-title"><span>考试曲目4：</span></div>
-        <input class="full-input" v-model="form.bent4.value" placeholder="请输入考试曲目" />
+        <input class="full-input" v-model="form.bent4.value" placeholder="请输入考试曲目" @change="e => inputChange('bent4', e)" />
       </div>
       <div class="form-box">
         <div class="required-title"><span>考试曲目5：</span></div>
-        <input class="full-input" v-model="form.bent5.value" placeholder="请输入考试曲目" />
+        <input class="full-input" v-model="form.bent5.value" placeholder="请输入考试曲目" @change="e => inputChange('bent5', e)" />
       </div>
       <div class="line-h"></div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">填表人：</span></div>
-        <input class="full-input" v-model="form.fillter.value" placeholder="填表人姓名" />
+        <input class="full-input" v-model="form.fillter.value" placeholder="填表人姓名" @change="e => inputChange('fillter', e)" />
       </div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">指导老师：</span></div>
-        <input class="full-input" v-model="form.teacher.value" placeholder="指导老师姓名" />
+        <input class="full-input" v-model="form.teacher.value" placeholder="指导老师姓名" @change="e => inputChange('teacher', e)" />
       </div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">老师电话：</span></div>
-        <input class="full-input" v-model="form.teacherphone.value" @input="phoneInput" placeholder="指导老师电话" />
+        <input class="full-input" v-model="form.teacherphone.value" @input="teacherPhoneInput" placeholder="指导老师电话" @change="e => inputChange('teacherphone', e)" />
       </div>
     </div>
     <div class="bottom-buttons">
@@ -260,6 +260,7 @@
 <script>
 import Mtils from 'mtils'
 import axios from 'axios'
+import globalConstant from '../lib/globalConstant'
 const defaultAvatar = require('../assets/image/default_avatar.png')
 
 let years = []
@@ -294,6 +295,8 @@ for (let j = 0; j < 13; j++) {
 export default {
   data () {
     return {
+      roles: globalConstant.roles,
+      userRole: '0',
       defaultAvatar: defaultAvatar,
       nationalitys: [],
       volks: [],
@@ -644,27 +647,7 @@ export default {
     },
     inputChange: function (type, e) {
       let { value } = e.target
-      console.log(type, value)
-      if (type === 'name') { // 姓名
-        let pinyin = ''
-        if (value && Mtils.validation.isChinese(value)) { // 全中文
-          pinyin = Mtils.utils.makePy(value)
-          if (value && value.length) {
-            let newStr = ''
-            for (let i = 0; i < value.length; i++) {
-              newStr += ((i === 0) ? value[i] : (' ' + value[i]))
-            }
-            pinyin = Mtils.utils.makePy(newStr)
-          }
-        } else { // 非全中文
-          pinyin = this.titleCase(value)
-        }
-        console.log('pinyin', pinyin)
-        this.form.name.value = value
-        this.form.name.valid = Boolean(value)
-        this.form.pinyin.value = pinyin
-        this.form.pinyin.valid = Boolean(pinyin)
-      } else if (type === 'pinyin' || type === 'cardnumber' || type === 'phone' || type === 'bent1' || type === 'bent2' || type === 'bent3' || type === 'bent4' || type === 'bent5' || type === 'contact' || type === 'contactphone' || type === 'fillter' || type === 'teacher' || type === 'teacherphone') { // 拼音、证件号码、手机号、考试曲目、联系人、联系人电话、填表人、指导老师、指导老师电话
+      if (type === 'pinyin' || type === 'cardnumber' || type === 'phone' || type === 'bent1' || type === 'bent2' || type === 'bent3' || type === 'bent4' || type === 'bent5' || type === 'contact' || type === 'contactphone' || type === 'fillter' || type === 'teacher' || type === 'teacherphone') { // 拼音、证件号码、手机号、考试曲目、联系人、联系人电话、填表人、指导老师、指导老师电话
         this.form[type].value = value
         this.form[type].text = value
         this.form[type].valid = Boolean(value)
@@ -692,6 +675,14 @@ export default {
       this.form.phone.value = numVal
       this.form.phone.text = numVal
       this.form.phone.valid = Boolean(numVal)
+    },
+    teacherPhoneInput (e) {
+      let eve = e || window.event
+      let val = eve.currentTarget.value
+      let numVal = val.replace(/[^0-9]/ig, '')
+      this.form.teacherphone.value = numVal
+      this.form.teacherphone.text = numVal
+      this.form.teacherphone.valid = Boolean(numVal)
     },
     pickerChange: function (type, value) {
       console.log('pickerChange', this.form.nationality, type, value)
@@ -784,8 +775,9 @@ export default {
       console.log('genderChange', value)
       this.form.gender.valid = Boolean(value)
     },
-    getFormData: function () {
+    testFormData: function () {
       let form = JSON.parse(JSON.stringify(this.form))
+      let valid = true
       for (let key in form) {
         console.log('key', key)
         if (key === 'lastgetcertificate') { // 最近一次获得同专业考级证书
@@ -794,12 +786,14 @@ export default {
             if (form.lastgetcertificate.year.tip) {
               this.$toast(form.lastgetcertificate.year.tip)
             }
+            valid = false
             break
           } else if (!form.lastgetcertificate.month.valid) {
             // this.scrollToBlock(key)
             if (form.lastgetcertificate.month.tip) {
               this.$toast(form.lastgetcertificate.month.tip)
             }
+            valid = false
             break
           }
         } else {
@@ -808,13 +802,29 @@ export default {
             if (form[key].tip) {
               this.$toast(form[key].tip)
             }
+            valid = false
             break
           }
         }
       }
+      return valid
+      // this.$router.replace({ path: '/enroll/applysuccess' })
     },
     submitTap: function () {
-      this.getFormData()
+      let valid = this.testFormData()
+      if (valid) { // 数据填写完毕
+        let { roles, userRole } = this
+        if (userRole.toString() === roles.teacher || userRole.toString() === roles.institution) { // 老师或机构,直接成功，无需审核、支付
+          this.$router.replace({ path: '/enroll/paysuccess' })
+          return false
+        }
+        console.log('this.form.majorcertificate', this.form.majorcertificate, this.form.basicmusiccertificate)
+        if ((this.form.majorcertificate.required && this.form.majorcertificate.valid) || (this.form.basicmusiccertificate.required && this.form.basicmusiccertificate.valid)) { // 需上传基本乐科证书或者专业证书，需审核
+          this.$router.replace({ path: '/enroll/applysuccess' })
+        } else {
+          this.$router.replace({ path: '/enroll/order' })
+        }
+      }
     }
   }
 }

@@ -14,6 +14,11 @@ const EnrollManage = () => import('./views/EnrollManage.vue')
 const Queryhall = () => import('./views/Queryhall.vue')
 const Queryscore = () => import('./views/Queryscore.vue')
 const EnrollApply = () => import('./views/EnrollApply.vue')
+const EnrollApplySuccess = () => import('./views/EnrollApplySuccess.vue')
+const EnrollOrder = () => import('./views/EnrollOrder.vue')
+const EnrollPay = () => import('./views/EnrollPay.vue')
+const EnrollPaySuccess = () => import('./views/EnrollPaySuccess.vue')
+const EnrollDetail = () => import('./views/EnrollDetail.vue')
 
 Vue.use(Router)
 
@@ -48,6 +53,46 @@ const router = new Router({
           path: 'apply',
           name: 'EnrollApply',
           component: EnrollApply,
+          meta: {
+            requiredLogin: true
+          }
+        },
+        {
+          path: 'applysuccess',
+          name: 'EnrollApplySuccesss',
+          component: EnrollApplySuccess,
+          meta: {
+            requiredLogin: true
+          }
+        },
+        {
+          path: 'order',
+          name: 'EnrollOrder',
+          component: EnrollOrder,
+          meta: {
+            requiredLogin: true
+          }
+        },
+        {
+          path: 'pay',
+          name: 'EnrollPay',
+          component: EnrollPay,
+          meta: {
+            requiredLogin: true
+          }
+        },
+        {
+          path: 'paysuccess',
+          name: 'EnrollPaySuccess',
+          component: EnrollPaySuccess,
+          meta: {
+            requiredLogin: true
+          }
+        },
+        {
+          path: 'detail',
+          name: 'EnrollDetail',
+          component: EnrollDetail,
           meta: {
             requiredLogin: true
           }
