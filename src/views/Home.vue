@@ -13,7 +13,7 @@
           <div class="banner-sub-title">海南考区</div>
           <div style="margin:0 25px;height:2px;background:#fff"></div>
           <div class="entry-buttons clearfix">
-            <div v-for="(et, idx) in entry" :key="idx" class="entry-btn fl cursor-pointer">
+            <div v-for="(et, idx) in entry" :key="idx" class="entry-btn fl cursor-pointer" @click.stop="entryClick(et.route)">
               <div class="entry-btn-content">{{et.label}}</div>
             </div>
           </div>
@@ -25,7 +25,7 @@
           <div v-for="leftCate in leftCates" :key="leftCate.id" class="cate-box">
             <block-head :title="leftCate.name" />
             <div class="cate-dynamic-box">
-              <dynamic v-for="dynamic in leftCate.dynamics" :key="dynamic.id" :dynamic="dynamic" />
+              <dynamic v-for="dynamic in leftCate.list" :key="dynamic.id" :dynamic="dynamic" />
             </div>
           </div>
         </div>
@@ -34,10 +34,10 @@
             <block-head :title="rightCate.name" />
             <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
               <template v-if="rightIdx === 0">
-                <dynamic v-for="dynamic in rightCate.dynamics" :key="dynamic.id" :dynamic="dynamic" mode="2" />
+                <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
               </template>
               <template v-else>
-                <div v-for="(dynamic, dynamicIdx) in rightCate.dynamics" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
+                <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
                   <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
                 </div>
               </template>
@@ -57,7 +57,6 @@ import TopBar from '../components/TopBar'
 import BottomInfo from '../components/BottomInfo'
 import BlockHead from '../components/BlockHead'
 import Dynamic from '../components/Dynamic'
-import mockData from '../datamap/home'
 
 export default {
   data () {
@@ -66,24 +65,44 @@ export default {
         {
           name: '',
           label: '考级报名',
-          link: ''
+          route: '/enroll/manage'
         },
         {
           name: '',
           label: '考场查询',
-          link: ''
+          route: '/enroll/queryhall'
         },
         {
           name: '',
           label: '成绩查询',
-          link: ''
+          route: '/enroll/queryscore'
         }
       ],
-      leftCates: mockData.leftCates,
-      rightCates: mockData.rightCates
+      leftCates: [],
+      rightCates: []
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic }
+  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic },
+  mounted () {
+    this.fetchData()
+  },
+  methods: {
+    entryClick: function (route) {
+      console.log('route', route)
+      if (route) {
+        this.$router.replace({ path: route })
+      }
+    },
+    fetchData: function () {
+      this.$ajax('/home').then(res => {
+        console.log('sss', res)
+        if (res && !res.error) {
+          this.leftCates = [res.data.list[0], res.data.list[1]]
+          this.rightCates = [res.data.list[2], res.data.list[3], res.data.list[4]]
+        }
+      })
+    }
+  }
 }
 </script>
 

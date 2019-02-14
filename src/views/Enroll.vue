@@ -12,7 +12,9 @@
           <div class="side-bar-item cursor-pointer" :class="{actived: $route.path.indexOf('/enroll/queryscore') !== -1}" @click.stop="sidebarClick('4')">成绩查询</div>
         </div>
         <div class="side-body fr">
-          <router-view />
+          <keep-alive>
+            <router-view />
+          </keep-alive>
         </div>
       </div>
     </div>

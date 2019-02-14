@@ -23,11 +23,11 @@
               <div v-show="seleced === 1" class="tec">
                 <div class="input-box clearfix">
                   <span class="input-title fl">登录账号：</span>
-                  <input class="input-content fr" placeholder="请输入账号" type="text" v-model="form1.account" />
+                  <input class="input-content fr" placeholder="请输入账号" type="text" v-model="form1.username" />
                 </div>
                 <div class="input-box clearfix">
                   <span class="input-title fl">登录密码：</span>
-                  <input class="input-content fr" placeholder="请输入密码" type="password" :disabled="!form1.account" v-model="form1.password" />
+                  <input class="input-content fr" placeholder="请输入密码" type="password" :disabled="!form1.username" v-model="form1.password" />
                 </div>
                 <div class="tip clearfix" :class="{show: tip1}"><i class="ykfont yk-error fl"></i><span class="tip-text fl">{{tip1}}</span></div>
                 <div class="tec-login-btn cursor-pointer" @click="login">登录</div>
@@ -35,11 +35,11 @@
               <div v-show="seleced === 2" class="ins">
                 <div class="input-box clearfix">
                   <span class="input-title fl">登录账号：</span>
-                  <input class="input-content fr" placeholder="请输入账号" type="text" v-model="form2.account" />
+                  <input class="input-content fr" placeholder="请输入账号" type="text" v-model="form2.username" />
                 </div>
                 <div class="input-box clearfix">
                   <span class="input-title fl">登录密码：</span>
-                  <input class="input-content fr" placeholder="请输入密码" type="password" :disabled="!form2.account" v-model="form2.password" />
+                  <input class="input-content fr" placeholder="请输入密码" type="password" :disabled="!form2.username" v-model="form2.password" />
                 </div>
                 <div class="tip clearfix" :class="{show: tip2}"><i class="ykfont yk-error fl"></i><span class="tip-text fl">{{tip2}}</span></div>
                 <div class="ins-login-btn cursor-pointer" @click="login">登录</div>
@@ -64,16 +64,18 @@
 export default {
   data () {
     return {
-      seleced: 0,
+      seleced: 1,
       wechatLoginCode: '',
       form1: {
-        account: '',
-        password: ''
+        username: '',
+        password: '',
+        type: '1'
       },
       tip1: '',
       form2: {
-        account: '',
-        password: ''
+        username: '',
+        password: '',
+        tyep: '2'
       },
       tip2: ''
     }
@@ -86,30 +88,36 @@ export default {
       this.seleced = parseInt(idx)
     },
     login: function () {
-      let form = null
+      let rData = {}
       if (this.seleced.toString() === '0') { // 考生登录
         this.wechatLoginCode = 'wechatLoginCode'
       } else if (this.seleced.toString() === '1') { // 老师登录
-        form = this.form1
+        rData = this.form1
       } else if (this.seleced.toString() === '2') { // 机构登录
-        form = this.form2
+        rData = this.form2
       }
-      if (!form.account) {
+      if (!rData.username) {
         this['tip' + this.seleced.toString()] = '请输入账号'
         return false
-      } else if (!form.password) {
+      } else if (!rData.password) {
         this['tip' + this.seleced.toString()] = '请输入密码'
         return false
       } else {
         this['tip' + this.seleced.toString()] = ''
       }
-      // 模拟登录
-      setTimeout(() => {
-        window.localStorage.token = '模拟的token'
-        window.localStorage.username = '模拟的username'
-        let loginBack = window.localStorage.loginBack || '/'
-        this.$router.replace({ path: loginBack })
-      }, 1000)
+      this.$ajax('/login', { data: rData }).then(res => {
+        if (res && !res.error) { // 登录成功
+          window.localStorage.token = res.data.token
+          window.localStorage.username = res.data.username
+          window.localStorage.userType = res.data.type
+          let loginBack = window.localStorage.loginBack || '/'
+          this.$router.replace({ path: loginBack })
+        } else if (res && res.error && res.msg) {
+          this.$toast(res.msg)
+        }
+      }).catch(err => {
+        console.log('err', err)
+      })
     }
   },
   beforeRouteLeave (to, from, next) {

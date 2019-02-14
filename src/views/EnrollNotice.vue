@@ -12,7 +12,16 @@ import NoticeItem from '../components/NoticeItem'
 export default {
   data () {
     return {
-      enrollNotice: [
+      enrollNotice: []
+    }
+  },
+  components: { NoticeItem },
+  mounted () {
+    this.fetchNotice()
+  },
+  methods: {
+    fetchNotice: function () {
+      this.enrollNotice = [
         {
           id: 1,
           title: '关于中国音乐学院本院在2019年寒假的考级通知',
@@ -64,8 +73,7 @@ export default {
         }
       ]
     }
-  },
-  components: { NoticeItem }
+  }
 }
 </script>
 

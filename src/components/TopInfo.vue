@@ -50,9 +50,18 @@ export default {
     },
     logoutClick: function () {
       console.log('logoutClick')
+      // let rData = {
+      //   token: window.localStorage.token || ''
+      // }
+      // this.$ajax('/logout', { data: rData }).then(res => {
+      //   console.log(res, res)
+      // }).catch(err => {
+      //   console.log('err', err)
+      // })
       this.username = ''
       window.localStorage.token = ''
       window.localStorage.username = ''
+      window.localStorage.userType = ''
       if (this.$route.meta.requiredLogin) {
         utils.goLogin()
       }

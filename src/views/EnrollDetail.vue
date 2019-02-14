@@ -4,6 +4,9 @@
       <div class="title">报名信息</div>
       <div class="info-body">
         <img v-if="order.evaSheet" class="image" :src="order.evaSheet" alt="报名评审表" title="报名评审表" />
+        <div class="seal-box">
+          <seal :type="order.status.toString()" />
+        </div>
         <div v-if="order.cerMajor || order.cerBasicmusic" class="cer-buttons clearfix">
           <div v-if="order.cerMajor" class="cer-button cursor-pointer fl" @click.stop="changeShowCer('showCerMajor')">查看专业证书</div>
           <div v-if="order.cerBasicmusic" class="cer-button cursor-pointer fl" @click.stop="changeShowCer('showCerBasicmusic')">查看基本乐科证书</div>
@@ -18,21 +21,87 @@
         <i class="ykfont yk-close cer-close cursor-pointer" @click.stop="changeShowCer('showCerBasicmusic')"></i>
       </div>
     </div>
+    <div v-if="order.status.toString() === '5'" class="fee-box">
+      <div class="title">缴费信息</div>
+      <div class="fee-body">
+        <div class="info-row">缴费状态：{{statusText[order.status]}}</div>
+        <div class="clearfix">
+          <div class="info-row fl">缴费科目：</div>
+          <div class="fl" style="width:870px">
+            <div v-for="row in order.infoList" :key="row.id" class="info-row clearfix">
+              <div class="name fl">{{row.name}}</div>
+              <div class="price fr">{{row.price}}元</div>
+            </div>
+          </div>
+        </div>
+        <div class="info-row">缴费金额：{{order.total}}元</div>
+        <div class="info-row">缴费方式：{{order.methodText}}</div>
+        <div class="info-row">缴费时间：{{order.payTime}}</div>
+        <div class="info-row">缴费单号：{{order.payNumber}}</div>
+      </div>
+    </div>
+    <div v-else-if="order.status.toString() === '2'" class="fee-box2">
+      <div class="title">应缴费用</div>
+      <div class="fee-body">
+        <div v-for="row in order.infoList" :key="row.id" class="info-row2 clearfix">
+          <div class="fl">考试项目：{{row.name}}</div>
+          <div class="fr">{{row.price}}元</div>
+        </div>
+        <div class="total">总计：<span style="color:#D0021B">{{order.total}}</span>元</div>
+      </div>
+    </div>
+    <div v-if="order.status.toString() === '2'">
+      <div class="state-text2 clearfix">
+        <i class="ykfont yk-warning fl"></i>
+        <div class="warining-text fl">进行缴费后，考试费用不再退回</div>
+      </div>
+      <div class="go-pay-btn cursor-pointer" @click.stop="goPay">立即缴费</div>
+    </div>
+    <div v-else-if="order.status.toString() === '5'">
+      <div v-if="hall && hall.id" class="hall-box">
+        <div class="title">考场信息</div>
+        <div class="hall-body">
+          <div class="info-row">考试地址：{{hall.address}}元</div>
+          <div class="info-row">考场：{{hall.name}}</div>
+          <div class="info-row">排位号：{{hall.seat}}</div>
+          <div class="info-row">考试时间：{{hall.examTime}}</div>
+        </div>
+      </div>
+      <div v-if="(userRole.toString() === roles.teacher || userRole.toString() === roles.institution) && !outOfExam && !editedDelay" class="delay-box clearfix">
+        <div class="required-title fl">是否缺考顺延：</div>
+        <label class="delay-label cursor-pointer fl clearfix">
+          <input type="radio" class="delay-radio cursor-pointer fl" value="0" v-model="delay" />
+          <span class="fl">否</span>
+        </label>
+        <label class="delay-label cursor-pointer fl clearfix">
+          <input type="radio" class="delay-radio cursor-pointer fl" value="1" v-model="delay" />
+          <span class="fl">是</span>
+        </label>
+      </div>
+      <div class="bottom-buttons">
+        <div class="cer-buttons clearfix">
+          <div v-if="userRole.toString() === roles.teacher || userRole.toString() === roles.institution" class="bottom-button cursor-pointer fl" @click.stop="enrollMore">继续添加</div>
+          <div class="bottom-button cursor-pointer fl" @click.stop="complete">完成</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import globalConstant from '../lib/globalConstant'
+import Seal from '../components/Seal'
 
 export default {
   data () {
     return {
+      statusText: globalConstant.statusText,
       roles: globalConstant.roles,
       userRole: '0',
       showCerMajor: false,
       showCerBasicmusic: false,
       order: {
-        statusText: '已缴费',
+        status: '5',
         methodText: '微信支付/线下缴费',
         payTime: '2019.01.02 14：35：30',
         payNumber: '',
@@ -65,12 +134,14 @@ export default {
       delay: '0' // 缺考是否顺延
     }
   },
-  mounted () {
-    console.log('this.$route', this.$route)
-  },
+  components: { Seal },
   methods: {
     changeShowCer: function (key) {
       this[key] = !this[key]
+    },
+    goPay: function () {
+      console.log('goPay')
+      this.$router.replace({ path: '/enroll/pay' })
     },
     requestDelay: function (callback) {
       // todo，请求缺考顺延
@@ -92,11 +163,11 @@ export default {
     complete: function () { // 点击完成
       if ((this.userRole.toString() === this.roles.teacher || this.userRole.toString() === this.roles.institution) && !this.outOfExam && !this.editedDelay) { // 老师或机构 且 在考试时间内 且未请求过缺考顺延
         const successCallback = () => {
-          this.$router.replace({ path: '/enroll/detail' })
+          this.$router.go(-1)
         }
         this.requestDelay(successCallback)
       } else {
-        this.$router.replace({ path: '/enroll/detail' })
+        this.$router.go(-1)
       }
     }
   }
@@ -255,5 +326,51 @@ export default {
 }
 .bottom-button:first-child{
   margin-left: 0;
+}
+.seal-box{
+  position: absolute;
+  top: 0;
+  right: 92px;
+}
+
+.fee-box2{
+  background: #fff;
+  margin-top: 25px;
+}
+.fee-body2{
+  padding: 30px 26px 45px;
+}
+.info-row2{
+  font-size: 16px;
+  line-height: 22px;
+  color: #141619;
+  margin-top: 30px;
+}
+.info-row2:first-child{
+  margin-top: 16px;
+}
+.total2{
+  font-size: 20px;
+  line-height: 28px;
+  color: #141619;
+  margin-top: 30px;
+  text-align: right;
+  font-weight: bold;
+}
+.state-text2{
+  font-size: 16px;
+  line-height: 22px;
+  margin: 30px 0 0 24px;
+}
+.go-pay-btn{
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  background: #BB3F3F;
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  margin: 50px auto 0;
 }
 </style>

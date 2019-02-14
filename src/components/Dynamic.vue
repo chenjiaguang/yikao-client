@@ -1,12 +1,12 @@
 <template>
   <div class="c-dynamic clearfix" :class="{['mode' + mode]: true}">
-    <div class="image" :class="{fl: mode === '1', ['mode' + mode]: true}" :style="{backgroundImage: 'url(' + (dynamic.image || defaultImg) + ')', backgroundSize: (dynamic.image ? 'cover' : '120px 120px')}"></div>
+    <div class="image" :class="{fl: mode === '1', ['mode' + mode]: true}" :style="{backgroundImage: 'url(' + (dynamic.cover_url || defaultImg) + ')', backgroundSize: (dynamic.cover_url ? 'cover' : '120px 120px')}"></div>
     <div class="content-box" :class="{fr: mode === '1', ['mode' + mode]: true}">
       <div class="content-top" :class="{['mode' + mode]: true}">
         <p class="title cursor-pointer" :class="{['mode' + mode]: true}">{{dynamic.title}}</p>
-        <p v-if="mode === '1'" class="content" :class="{['mode' + mode]: true}">{{dynamic.content}}</p>
+        <p v-if="mode === '1'" class="content" :class="{['mode' + mode]: true}">{{dynamic.intro}}</p>
       </div>
-      <p v-if="mode === '1'" class="time" :class="{['mode' + mode]: true}">{{dynamic.time}}</p>
+      <p v-if="mode === '1'" class="time" :class="{['mode' + mode]: true}">{{dynamic.create_at}}</p>
     </div>
   </div>
 </template>
@@ -66,6 +66,9 @@ export default {
 }
 .content-box{
   max-width: 590px;
+}
+.content-box.mode1{
+  width: 590px;
 }
 .content-top.mode1{
   height: 134px;

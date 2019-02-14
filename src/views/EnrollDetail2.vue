@@ -1,9 +1,12 @@
 <template>
-  <div class="p-enroll-pay-success">
+  <div class="p-enroll-detail">
     <div class="info-box">
       <div class="title">报名信息</div>
       <div class="info-body">
         <img v-if="order.evaSheet" class="image" :src="order.evaSheet" alt="报名评审表" title="报名评审表" />
+        <div class="seal-box">
+          <seal :type="order.status.toString()" />
+        </div>
         <div v-if="order.cerMajor || order.cerBasicmusic" class="cer-buttons clearfix">
           <div v-if="order.cerMajor" class="cer-button cursor-pointer fl" @click.stop="changeShowCer('showCerMajor')">查看专业证书</div>
           <div v-if="order.cerBasicmusic" class="cer-button cursor-pointer fl" @click.stop="changeShowCer('showCerBasicmusic')">查看基本乐科证书</div>
@@ -18,56 +21,12 @@
         <i class="ykfont yk-close cer-close cursor-pointer" @click.stop="changeShowCer('showCerBasicmusic')"></i>
       </div>
     </div>
-    <div class="fee-box">
-      <div class="title">缴费信息</div>
-      <div class="fee-body">
-        <div class="info-row">缴费状态：{{order.statusText}}</div>
-        <div class="clearfix">
-          <div class="info-row fl">缴费科目：</div>
-          <div class="fl" style="width:870px">
-            <div v-for="row in order.infoList" :key="row.id" class="info-row clearfix">
-              <div class="name fl">{{row.name}}</div>
-              <div class="price fr">{{row.price}}元</div>
-            </div>
-          </div>
-        </div>
-        <div class="info-row">缴费金额：{{order.total}}元</div>
-        <div class="info-row">缴费方式：{{order.methodText}}</div>
-        <div class="info-row">缴费时间：{{order.payTime}}</div>
-        <div class="info-row">缴费单号：{{order.payNumber}}</div>
-      </div>
-    </div>
-    <div v-if="hall && hall.id" class="hall-box">
-      <div class="title">考场信息</div>
-      <div class="hall-body">
-        <div class="info-row">考试地址：{{hall.address}}元</div>
-        <div class="info-row">考场：{{hall.name}}</div>
-        <div class="info-row">排位号：{{hall.seat}}</div>
-        <div class="info-row">考试时间：{{hall.examTime}}</div>
-      </div>
-    </div>
-    <div v-if="(userRole.toString() === roles.teacher || userRole.toString() === roles.institution) && !outOfExam && !editedDelay" class="delay-box clearfix">
-      <div class="required-title fl">是否缺考顺延：</div>
-      <label class="delay-label cursor-pointer fl clearfix">
-        <input type="radio" class="delay-radio cursor-pointer fl" value="0" v-model="delay" />
-        <span class="fl">否</span>
-      </label>
-      <label class="delay-label cursor-pointer fl clearfix">
-        <input type="radio" class="delay-radio cursor-pointer fl" value="1" v-model="delay" />
-        <span class="fl">是</span>
-      </label>
-    </div>
-    <div class="bottom-buttons">
-      <div class="cer-buttons clearfix">
-        <div v-if="userRole.toString() === roles.teacher || userRole.toString() === roles.institution" class="bottom-button cursor-pointer fl" @click.stop="enrollMore">继续添加</div>
-        <div class="bottom-button cursor-pointer fl" @click.stop="complete">完成</div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import globalConstant from '../lib/globalConstant'
+import Seal from '../components/Seal'
 
 export default {
   data () {
@@ -77,7 +36,7 @@ export default {
       showCerMajor: false,
       showCerBasicmusic: false,
       order: {
-        statusText: '已缴费',
+        status: '1',
         methodText: '微信支付/线下缴费',
         payTime: '2019.01.02 14：35：30',
         payNumber: '',
@@ -97,18 +56,12 @@ export default {
           }
         ],
         total: '520.00'
-      },
-      hall: {
-        id: '1',
-        address: '海南省海口市龙华区滨海大道105号百方广场15B',
-        name: '考场1',
-        seat: '35',
-        examTime: '2019.02.15 14:00'
-      },
-      outOfExam: false, // 考试时间是否已过
-      editedDelay: false, // 是否已提交过缺考顺延
-      delay: '0' // 缺考是否顺延
+      }
     }
+  },
+  components: { Seal },
+  mounted () {
+    console.log('this.$route', this.$route)
   },
   methods: {
     changeShowCer: function (key) {
@@ -146,7 +99,7 @@ export default {
 </script>
 
 <style scoped>
-.p-enroll-pay-success{
+.p-enroll-detail{
   padding-bottom: 45px;
 }
 .title{
@@ -167,6 +120,7 @@ export default {
 .info-body{
   padding: 30px 26px 45px;
   text-align: center;
+  position: relative;
 }
 .fee-body{
   padding: 14px 26px 29px;
@@ -263,39 +217,9 @@ export default {
   font-size: 32px;
   color: #fff;
 }
-.delay-box{
-  padding-top: 26px;
-  padding-left: 26px;
-}
-.delay-label{
-  padding: 0 20px;
-  margin: 0 24px;
-  font-size: 16px;
-  line-height: 22px;
-}
-.delay-radio{
-  display: block;
-  margin: 1px 10px 0 0;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-}
-.bottom-buttons{
-  text-align: center;
-}
-.bottom-button{
-  width: 148px;
-  height: 38px;
-  line-height: 38px;
-  border: 1px solid #979797;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #141619;
-  text-align: center;
-  margin-left: 150px;
-  background: #fff;
-}
-.bottom-button:first-child{
-  margin-left: 0;
+.seal-box{
+  position: absolute;
+  top: 0;
+  right: 92px;
 }
 </style>

@@ -15,10 +15,9 @@ const Queryhall = () => import('./views/Queryhall.vue')
 const Queryscore = () => import('./views/Queryscore.vue')
 const EnrollApply = () => import('./views/EnrollApply.vue')
 const EnrollApplySuccess = () => import('./views/EnrollApplySuccess.vue')
-const EnrollOrder = () => import('./views/EnrollOrder.vue')
 const EnrollPay = () => import('./views/EnrollPay.vue')
-const EnrollPaySuccess = () => import('./views/EnrollPaySuccess.vue')
 const EnrollDetail = () => import('./views/EnrollDetail.vue')
+const ScoreResult = () => import('./views/ScoreResult.vue')
 
 Vue.use(Router)
 
@@ -66,25 +65,9 @@ const router = new Router({
           }
         },
         {
-          path: 'order',
-          name: 'EnrollOrder',
-          component: EnrollOrder,
-          meta: {
-            requiredLogin: true
-          }
-        },
-        {
           path: 'pay',
           name: 'EnrollPay',
           component: EnrollPay,
-          meta: {
-            requiredLogin: true
-          }
-        },
-        {
-          path: 'paysuccess',
-          name: 'EnrollPaySuccess',
-          component: EnrollPaySuccess,
           meta: {
             requiredLogin: true
           }
@@ -114,6 +97,14 @@ const router = new Router({
           path: 'queryscore',
           name: 'Queryscore',
           component: Queryscore
+        },
+        {
+          path: 'scoreresult',
+          name: 'ScoreResult',
+          component: ScoreResult,
+          meta: {
+            requiredLogin: true
+          }
         }
       ]
     },

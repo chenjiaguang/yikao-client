@@ -808,21 +808,20 @@ export default {
         }
       }
       return valid
-      // this.$router.replace({ path: '/enroll/applysuccess' })
     },
     submitTap: function () {
       let valid = this.testFormData()
       if (valid) { // 数据填写完毕
         let { roles, userRole } = this
         if (userRole.toString() === roles.teacher || userRole.toString() === roles.institution) { // 老师或机构,直接成功，无需审核、支付
-          this.$router.replace({ path: '/enroll/paysuccess' })
+          this.$router.replace({ path: '/enroll/detail' })
           return false
         }
         console.log('this.form.majorcertificate', this.form.majorcertificate, this.form.basicmusiccertificate)
         if ((this.form.majorcertificate.required && this.form.majorcertificate.valid) || (this.form.basicmusiccertificate.required && this.form.basicmusiccertificate.valid)) { // 需上传基本乐科证书或者专业证书，需审核
           this.$router.replace({ path: '/enroll/applysuccess' })
         } else {
-          this.$router.replace({ path: '/enroll/order' })
+          this.$router.replace({ path: '/enroll/detail' })
         }
       }
     }

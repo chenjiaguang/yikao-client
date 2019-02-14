@@ -6,21 +6,21 @@
         <img v-if="order.evaSheet" class="image" :src="order.evaSheet" alt="报名评审表" title="报名评审表" />
       </div>
     </div>
-    <div class="fee-box">
+    <div class="fee-box2">
       <div class="title">应缴费用</div>
       <div class="fee-body">
-        <div v-for="row in order.infoList" :key="row.id" class="info-row clearfix">
-          <div class="name fl">考试项目：{{row.name}}</div>
-          <div class="price fr">{{row.price}}元</div>
+        <div v-for="row in order.infoList" :key="row.id" class="info-row2 clearfix">
+          <div class="fl">考试项目：{{row.name}}</div>
+          <div class="fr">{{row.price}}元</div>
         </div>
         <div class="total">总计：<span style="color:#D0021B">{{order.total}}</span>元</div>
       </div>
     </div>
-    <div class="state-text clearfix">
+    <div class="state-text2 clearfix">
       <i class="ykfont yk-warning fl"></i>
       <div class="warining-text fl">进行缴费后，考试费用不再退回</div>
     </div>
-    <div class="btn cursor-pointer" @click.stop="goPay">立即缴费</div>
+    <div class="go-pay-btn cursor-pointer" @click.stop="goPay">立即缴费</div>
   </div>
 </template>
 
@@ -68,13 +68,17 @@ export default {
   padding: 0 26px;
   background: #FFF7EC;
 }
-.info-box,.fee-box{
+.info-box,.fee-box2{
   background: #fff;
 }
-.fee-box{
+.fee-box2{
+  background: #fff;
   margin-top: 25px;
 }
-.info-body,.fee-body{
+.info-body,.fee-body2{
+  padding: 30px 26px 45px;
+}
+.fee-body2{
   padding: 30px 26px 45px;
 }
 .image{
@@ -84,16 +88,16 @@ export default {
   display: block;
   margin: 0 auto;
 }
-.info-row{
+.info-row2{
   font-size: 16px;
   line-height: 22px;
   color: #141619;
   margin-top: 30px;
 }
-.info-row:first-child{
+.info-row2:first-child{
   margin-top: 16px;
 }
-.total{
+.total2{
   font-size: 20px;
   line-height: 28px;
   color: #141619;
@@ -101,7 +105,7 @@ export default {
   text-align: right;
   font-weight: bold;
 }
-.state-text{
+.state-text2{
   font-size: 16px;
   line-height: 22px;
   margin: 30px 0 0 24px;
@@ -113,7 +117,7 @@ export default {
   color: #D0021B;
   padding-left: 8px;
 }
-.btn{
+.go-pay-btn{
   width: 200px;
   height: 40px;
   line-height: 40px;

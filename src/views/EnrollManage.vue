@@ -49,6 +49,8 @@
     <div class="list-table">
       <el-table
         :data="listTable"
+        class="table-box"
+        header-row-class-name="table-head"
         style="width:100%">
         <el-table-column prop="number" label="考试编号" width="91"></el-table-column>
         <el-table-column prop="examName" label="考试名称" width="91"></el-table-column>
@@ -68,7 +70,7 @@
             {{statusText[scope.row.status]}}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="91">
+        <el-table-column label="操作">
           <template slot-scope="scope">
            <span class="cursor-pointer" style="color:#795C41" @click.stop="moreDetail(scope.row.id)">查看详情</span>
           </template>
@@ -200,5 +202,10 @@ export default {
   text-align: center;
   border: 1px solid #979797;
   border-radius: 5px;
+}
+.table-box /deep/ .table-head, .table-box /deep/ th{
+  background: #FFF7EC;
+  height: 36px;
+  line-height: 36px;
 }
 </style>
