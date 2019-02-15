@@ -4,17 +4,17 @@
     <top-bar />
     <sub-nav :navs="subNavs" />
     <div class="perform-body">
-      <div class="cate-box">
+      <div v-if="cate && cate.name && cate.id" class="cate-box">
         <block-head title="艺术团表演" :hide-btn="true" />
         <div class="perform-box clearfix">
-          <div v-for="(perform, idx) in performs" :key="perform.id" class="perform-item fl" :class="{'list-left': idx % 3 === 0}">
+          <div v-for="(perform, idx) in cate.performs" :key="perform.id" class="perform-item fl" :class="{'list-left': idx % 3 === 0}">
             <perform :perform="perform" />
           </div>
         </div>
       </div>
       <div style="margin-top:20px;font-size:0;text-align:center">
         <div style="display:inline-block;">
-          <pagination :total="100" :current="1" />
+          <pagination :total="page.total_page || 0" :current="1" />
         </div>
       </div>
     </div>
@@ -31,16 +31,29 @@ import BlockHead from '../components/BlockHead'
 import Perform from '../components/Perform'
 import SubNav from '../components/SubNav'
 import Pagination from '../components/Pagination'
-import mockData from '../datamap/perform'
 
 export default {
   data () {
     return {
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Perform', label: '艺术团表演', link: '/perform' }],
-      performs: mockData.performs
+      cate: {},
+      page: {}
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, Perform, SubNav, Pagination }
+  components: { TopInfo, TopBar, BottomInfo, BlockHead, Perform, SubNav, Pagination },
+  mounted: function () {
+    this.fetchCate()
+  },
+  methods: {
+    fetchCate: function () {
+      this.$ajax('/msg/category3').then(res => {
+        if (res && !res.error) {
+          this.cate = res.data.leftCates
+          this.page = res.data.page
+        }
+      })
+    }
+  }
 }
 </script>
 

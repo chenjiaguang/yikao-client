@@ -23,7 +23,7 @@
       <div class="home-main clearfix">
         <div class="main-left fl">
           <div v-for="leftCate in leftCates" :key="leftCate.id" class="cate-box">
-            <block-head :title="leftCate.name" />
+            <block-head :title="leftCate.name" @blockClick="ele => blockClick(leftCate.id, ele)" />
             <div class="cate-dynamic-box">
               <dynamic v-for="dynamic in leftCate.list" :key="dynamic.id" :dynamic="dynamic" />
             </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="main-right fr">
           <div v-for="(rightCate, rightIdx) in rightCates" :key="rightCate.id" class="cate-box">
-            <block-head :title="rightCate.name" />
+            <block-head :title="rightCate.name" @blockClick="ele => blockClick(rightCate.id, ele)" />
             <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
               <template v-if="rightIdx === 0">
                 <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
@@ -57,8 +57,10 @@ import TopBar from '../components/TopBar'
 import BottomInfo from '../components/BottomInfo'
 import BlockHead from '../components/BlockHead'
 import Dynamic from '../components/Dynamic'
+import mixin from '../lib/mixins'
 
 export default {
+  mixins: [mixin],
   data () {
     return {
       entry: [
@@ -93,12 +95,28 @@ export default {
         this.$router.replace({ path: route })
       }
     },
+    blockClick: function (id, ele) {
+      if (ele === 'btn') {
+        // 点击了更多按钮
+        if (id.toString() === '1') { // 考级动态
+          this.$router.replace({ path: '/dynamic' })
+        } else if (id.toString() === '2') { // 师资培训
+          this.$router.replace({ path: '/training' })
+        } else if (id.toString() === '3') { // 艺术团表演
+          this.$router.replace({ path: '/perform' })
+        } else if (id.toString() === '4') { // 大赛动态
+          this.$router.replace({ path: '/race' })
+        } else if (id.toString() === '5') { // 考级教材
+          this.$router.replace({ path: '/book' })
+        }
+      }
+    },
     fetchData: function () {
       this.$ajax('/home').then(res => {
         console.log('sss', res)
         if (res && !res.error) {
-          this.leftCates = [res.data.list[0], res.data.list[1]]
-          this.rightCates = [res.data.list[2], res.data.list[3], res.data.list[4]]
+          this.leftCates = [res.data.list[0], res.data.list[1], res.data.list[2]]
+          this.rightCates = [res.data.list[3], res.data.list[4]]
         }
       })
     }

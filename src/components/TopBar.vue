@@ -1,6 +1,6 @@
 <template>
   <div class="c-top-bar clearfix">
-    <div v-for="(button, idx) in buttons" :class="{button: true, fl: true, first: idx === 0, 'cursor-pointer': true, actived: button.link === '/' ? ($route.path === button.link) : ($route.path.indexOf(button.link) !== -1)}" :key="button.name" @click.stop="buttonClick(idx, button)">{{button.label}}</div>
+    <div v-for="(button, idx) in buttons" :class="{button: true, fl: true, first: idx === 0, 'cursor-pointer': true, actived: button.link === '/' ? ($route.path === button.link) : ($route.path.indexOf(button.link + '/') !== -1 || $route.path === button.link)}" :key="button.name" @click.stop="buttonClick(idx, button)">{{button.label}}</div>
   </div>
 </template>
 

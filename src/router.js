@@ -18,6 +18,7 @@ const EnrollApplySuccess = () => import('./views/EnrollApplySuccess.vue')
 const EnrollPay = () => import('./views/EnrollPay.vue')
 const EnrollDetail = () => import('./views/EnrollDetail.vue')
 const ScoreResult = () => import('./views/ScoreResult.vue')
+const DynamicDetail = () => import('./views/DynamicDetail.vue')
 
 Vue.use(Router)
 
@@ -137,6 +138,11 @@ const router = new Router({
       path: '/us',
       name: 'Us',
       component: Us
+    },
+    {
+      path: '/dynamicdetail',
+      name: 'DynamicDetail',
+      component: DynamicDetail
     }
   ]
 })

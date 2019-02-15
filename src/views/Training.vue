@@ -6,15 +6,15 @@
     <div class="training-body">
       <div class="training-main clearfix">
         <div class="main-left fl">
-          <div v-for="leftCate in leftCates" :key="leftCate.id" class="cate-box">
-            <block-head :title="leftCate.name" />
+          <div v-if="leftCates && leftCates.name && leftCates.id" class="cate-box">
+            <block-head :title="leftCates.name" />
             <div class="cate-dynamic-box">
-              <dynamic v-for="dynamic in leftCate.dynamics" :key="dynamic.id" :dynamic="dynamic" />
+              <dynamic v-for="dynamic in leftCates.list" :key="dynamic.id" :dynamic="dynamic" />
             </div>
           </div>
           <div style="margin-top:20px;font-size:0;text-align:center">
             <div style="display:inline-block;">
-              <pagination :total="100" :current="1" />
+              <pagination :total="page.total_page || 0" :current="1" />
             </div>
           </div>
         </div>
@@ -23,10 +23,10 @@
             <block-head :title="rightCate.name" />
             <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
               <template v-if="rightIdx === 0">
-                <dynamic v-for="dynamic in rightCate.dynamics" :key="dynamic.id" :dynamic="dynamic" mode="2" />
+                <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
               </template>
               <template v-else>
-                <div v-for="(dynamic, dynamicIdx) in rightCate.dynamics" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
+                <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
                   <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
                 </div>
               </template>
@@ -48,17 +48,31 @@ import BlockHead from '../components/BlockHead'
 import Dynamic from '../components/Dynamic'
 import SubNav from '../components/SubNav'
 import Pagination from '../components/Pagination'
-import mockData from '../datamap/training'
 
 export default {
   data () {
     return {
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Training', label: '师资培训', link: '/training' }],
-      leftCates: mockData.leftCates,
-      rightCates: mockData.rightCates
+      leftCates: {},
+      rightCates: [],
+      page: {}
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic, SubNav, Pagination }
+  components: { TopInfo, TopBar, BottomInfo, BlockHead, Dynamic, SubNav, Pagination },
+  mounted: function () {
+    this.fetchCates()
+  },
+  methods: {
+    fetchCates: function () {
+      this.$ajax('/msg/category2').then(res => {
+        if (res && !res.error) {
+          this.leftCates = res.data.leftCates
+          this.rightCates = res.data.rightCates
+          this.page = res.data.page
+        }
+      })
+    }
+  }
 }
 </script>
 

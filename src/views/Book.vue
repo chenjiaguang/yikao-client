@@ -4,17 +4,17 @@
     <top-bar />
     <sub-nav :navs="subNavs" />
     <div class="book-body">
-      <div class="cate-box">
+      <div v-if="cate && cate.name && cate.id" class="cate-box">
         <block-head title="考级教材" :hide-btn="true" />
         <div class="book-box clearfix">
-          <div v-for="(book, idx) in books" :key="book.id" class="book-item fl" :class="{'list-left': idx % 4 === 0}">
+          <div v-for="(book, idx) in cate.list" :key="book.id" class="book-item fl" :class="{'list-left': idx % 4 === 0}">
             <book :book="book" />
           </div>
         </div>
       </div>
       <div style="margin-top:20px;font-size:0;text-align:center">
         <div style="display:inline-block;">
-          <pagination :total="100" :current="1" />
+          <pagination :total="page.total_page || 0" :current="1" />
         </div>
       </div>
     </div>
@@ -31,16 +31,29 @@ import BlockHead from '../components/BlockHead'
 import Book from '../components/Book'
 import SubNav from '../components/SubNav'
 import Pagination from '../components/Pagination'
-import mockData from '../datamap/book'
 
 export default {
   data () {
     return {
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Book', label: '考级教材', link: '/book' }],
-      books: mockData.books
+      cate: {},
+      page: {}
     }
   },
-  components: { TopInfo, TopBar, BottomInfo, BlockHead, Book, SubNav, Pagination }
+  components: { TopInfo, TopBar, BottomInfo, BlockHead, Book, SubNav, Pagination },
+  mounted: function () {
+    this.fetchCate()
+  },
+  methods: {
+    fetchCate: function () {
+      this.$ajax('/msg/category5').then(res => {
+        if (res && !res.error) {
+          this.cate = res.data.leftCates
+          this.page = res.data.page
+        }
+      })
+    }
+  }
 }
 </script>
 

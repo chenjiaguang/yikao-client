@@ -3,7 +3,7 @@
     <div class="image" :class="{fl: mode === '1', ['mode' + mode]: true}" :style="{backgroundImage: 'url(' + (dynamic.cover_url || defaultImg) + ')', backgroundSize: (dynamic.cover_url ? 'cover' : '120px 120px')}"></div>
     <div class="content-box" :class="{fr: mode === '1', ['mode' + mode]: true}">
       <div class="content-top" :class="{['mode' + mode]: true}">
-        <p class="title cursor-pointer" :class="{['mode' + mode]: true}">{{dynamic.title}}</p>
+        <p class="title cursor-pointer" :class="{['mode' + mode]: true}" @click.stop="goDetail(dynamic.id)">{{dynamic.title}}</p>
         <p v-if="mode === '1'" class="content" :class="{['mode' + mode]: true}">{{dynamic.intro}}</p>
       </div>
       <p v-if="mode === '1'" class="time" :class="{['mode' + mode]: true}">{{dynamic.create_at}}</p>
@@ -27,6 +27,11 @@ export default {
   data () {
     return {
       defaultImg: defaultImg
+    }
+  },
+  methods: {
+    goDetail: function (id) {
+      this.$router.push({ path: 'dynamicdetail', query: { id: id } })
     }
   }
 }
