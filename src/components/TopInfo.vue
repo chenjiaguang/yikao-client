@@ -14,6 +14,10 @@
         <p class="cursor-pointer" @click.stop="attendClick">关注我们</p>
         <p style="color:#666">attention</p>
       </div>
+      <div class="public-account-box">
+        <div class="public-account-qrcode" :style="{backgroundImage: 'url(' + 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1668725922,732188399&fm=26&gp=0.jpg' + ')'}"></div>
+        <div class="public-account-tip">微信关注我们<br />获取最新资讯</div>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +47,9 @@ export default {
   methods: {
     loginClick: function () {
       console.log('loginClick')
-      console.log(this.$route)
+      if (this.username) { // 已登录则不需要再跳转登录页面
+        return false
+      }
       window.localStorage.loginBack = this.$route.path
       this.$router.replace({ path: '/login' })
       return false
@@ -77,7 +83,7 @@ export default {
 
 <style scoped>
 .c-top-info{
-  overflow: hidden;
+  overflow: visible;
 }
 .logo{
   display: block;
@@ -88,6 +94,8 @@ export default {
 .login,.about-us{
   margin-top: 20px;
   margin-left: 26px;
+  overflow: visible;
+  position: relative;
 }
 .logout-btn{
   margin-left: 20px;
@@ -102,5 +110,40 @@ export default {
   text-align: center;
   font-size: 14px;
   line-height: 20px
+}
+.public-account-box{
+  overflow: hidden;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 3px rgba(0,0,0,0.4);
+  position: absolute;
+  left: -160px;
+  top: 0;
+  z-index: 9;
+  transition: all 500ms ease-in-out;
+  transform: translateY(-200%);
+  opacity: 0;
+  visibility: hidden;
+}
+.about-us:hover .public-account-box{
+  visibility: visible;
+  transform: translateY(0);
+  opacity: 1;
+}
+.public-account-qrcode{
+  width: 120px;
+  height: 120px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: cneter;
+  margin: 8px 12px;
+}
+.public-account-tip{
+  width: 144px;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  padding-bottom: 18px;
+  color: #777;
 }
 </style>

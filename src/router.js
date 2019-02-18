@@ -29,24 +29,37 @@ const router = new Router({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: Home,
+      meta: {
+        requiredLogin: false,
+        title: '社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        requiredLogin: false,
+        title: '登录-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/enroll',
       name: 'Enroll',
       component: Enroll,
+      meta: {
+        requiredLogin: false,
+        title: '考级报名-社会艺术等级考试-海南考区'
+      },
       children: [
         {
           path: 'notice',
           name: 'EnrollNotice',
           component: EnrollNotice,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '考级通知-社会艺术等级考试-海南考区'
           }
         },
         {
@@ -54,7 +67,8 @@ const router = new Router({
           name: 'EnrollApply',
           component: EnrollApply,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '考级报名-社会艺术等级考试-海南考区'
           }
         },
         {
@@ -62,7 +76,8 @@ const router = new Router({
           name: 'EnrollApplySuccesss',
           component: EnrollApplySuccess,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '提交成功-社会艺术等级考试-海南考区'
           }
         },
         {
@@ -70,7 +85,8 @@ const router = new Router({
           name: 'EnrollPay',
           component: EnrollPay,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '支付-社会艺术等级考试-海南考区'
           }
         },
         {
@@ -78,7 +94,8 @@ const router = new Router({
           name: 'EnrollDetail',
           component: EnrollDetail,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '报名详情-社会艺术等级考试-海南考区'
           }
         },
         {
@@ -86,25 +103,38 @@ const router = new Router({
           name: 'EnrollManage',
           component: EnrollManage,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            title: '报名管理-社会艺术等级考试-海南考区'
           }
         },
         {
           path: 'queryhall',
           name: 'Queryhall',
-          component: Queryhall
+          component: Queryhall,
+          meta: {
+            requiredLogin: false,
+            title: '考场查询-社会艺术等级考试-海南考区'
+          }
         },
         {
           path: 'queryscore',
           name: 'Queryscore',
-          component: Queryscore
+          component: Queryscore,
+          meta: {
+            requiredLogin: false,
+            title: '成绩查询-社会艺术等级考试-海南考区'
+          }
         },
         {
           path: 'scoreresult',
           name: 'ScoreResult',
           component: ScoreResult,
           meta: {
-            requiredLogin: true
+            requiredLogin: true,
+            meta: {
+              requiredLogin: false,
+              title: '成绩查询-社会艺术等级考试-海南考区'
+            }
           }
         }
       ]
@@ -112,37 +142,65 @@ const router = new Router({
     {
       path: '/dynamic',
       name: 'Dynamic',
-      component: Dynamic
+      component: Dynamic,
+      meta: {
+        requiredLogin: false,
+        title: '考级动态-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/training',
       name: 'Training',
-      component: Training
+      component: Training,
+      meta: {
+        requiredLogin: false,
+        title: '师资培训-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/race',
       name: 'Race',
-      component: Race
+      component: Race,
+      meta: {
+        requiredLogin: false,
+        title: '大赛动态-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/perform',
       name: 'Perform',
-      component: Perform
+      component: Perform,
+      meta: {
+        requiredLogin: false,
+        title: '艺术团表演-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/book',
       name: 'Book',
-      component: Book
+      component: Book,
+      meta: {
+        requiredLogin: false,
+        title: '考级教材-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/us',
       name: 'Us',
-      component: Us
+      component: Us,
+      meta: {
+        requiredLogin: false,
+        title: '关于我们-社会艺术等级考试-海南考区'
+      }
     },
     {
       path: '/dynamicdetail',
       name: 'DynamicDetail',
-      component: DynamicDetail
+      component: DynamicDetail,
+      meta: {
+        requiredLogin: false,
+        title: '社会艺术等级考试-海南考区'
+      }
     }
   ]
 })

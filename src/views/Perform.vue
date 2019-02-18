@@ -14,7 +14,7 @@
       </div>
       <div style="margin-top:20px;font-size:0;text-align:center">
         <div style="display:inline-block;">
-          <pagination :total="page.total_page || 0" :current="1" />
+          <pagination :total="page.total_page || 0" :current="1" @change="pn => fetchCates(pn)" />
         </div>
       </div>
     </div>
@@ -37,20 +37,33 @@ export default {
     return {
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Perform', label: '艺术团表演', link: '/perform' }],
       cate: {},
-      page: {}
+      page: {},
+      loading: false
     }
   },
   components: { TopInfo, TopBar, BottomInfo, BlockHead, Perform, SubNav, Pagination },
   mounted: function () {
-    this.fetchCate()
+    this.fetchCates(1)
   },
   methods: {
-    fetchCate: function () {
-      this.$ajax('/msg/category3').then(res => {
+    fetchCates: function (pn) {
+      console.log('fetchCates', pn)
+      if (this.loading) {
+        return false
+      }
+      let rData = {
+        pn
+      }
+      this.loading = true
+      this.$ajax('/msg/category3', { data: rData }).then(res => {
+        this.loading = false
         if (res && !res.error) {
           this.cate = res.data.leftCates
           this.page = res.data.page
         }
+      }).catch(err => {
+        console.log('err', err)
+        this.loading = false
       })
     }
   }

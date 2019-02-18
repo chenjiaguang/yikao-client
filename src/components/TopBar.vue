@@ -73,23 +73,21 @@ export default {
   text-align: center;
   margin-left: 2.5%;
   color: #76593D;
-  background: url('../assets/image/topbar_unactived.png') no-repeat;
+  background-image: url('../assets/image/topbar_unactived.png');
+  background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;
-  transition: background-image 0.4s;
 }
 .button.first{
   margin-left: 0;
 }
-.button.actived{
-  font-weight: bold;
-  color: #fff;
-  background: url('../assets/image/topbar_actived.png') no-repeat;
-  background-size: 100% 100%;
-  background-position: center;
-}
 .button:hover{
   font-weight: bold;
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.1) inset;
+}
+.button.actived{
+  font-weight: bold;
+  color: #fff;
+  background-image: url('../assets/image/topbar_actived.png');
 }
 </style>
