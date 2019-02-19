@@ -8,7 +8,7 @@
         </div>
       </div>
     </div>
-    <div v-if="notice.entry && notice.entry.query_apply" class="button cursor-pointer fr" :class="{disabled: notice.entryDisabled && notice.entryDisabled.query_apply}" @click.stop="applyClick">{{(notice.entryDisabled && notice.entryDisabled.query_apply) ? '截止报名' : '立即报名'}}</div>
+    <div v-if="notice.entry && notice.entry.query_apply" class="button cursor-pointer fr" :class="{disabled: notice.entryDisabled && notice.entryDisabled.query_apply}" @click.stop="applyClick(notice.id)">{{(notice.entryDisabled && notice.entryDisabled.query_apply) ? '截止报名' : '立即报名'}}</div>
   </div>
 </template>
 
@@ -21,12 +21,12 @@ export default {
     }
   },
   methods: {
-    applyClick: function () {
+    applyClick: function (id) {
       let disabled = this.notice.entryDisabled && this.notice.entryDisabled.query_apply
       if (disabled) {
         return false
       }
-      this.$router.push({ path: '/enroll/apply' })
+      this.$router.push({ path: '/enroll/apply?id=' + id })
     }
   }
 }

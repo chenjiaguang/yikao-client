@@ -1,7 +1,7 @@
 <template>
   <div class="c-bottom-info" :style="{height: height + 'px'}">
     <div class="c-bottom-bg"></div>
-    <p class="bottom-text">隐私版权 | 联系我们 ：010-66425733 010-66414137<br />©️ Copyright www.liebiao.com All Rights Reserved<br />琼ICP备05064625号</p>
+    <p class="bottom-text">隐私版权 | 联系我们 ：010-66425733 010-66414137<br />©️ Copyright 海南禹讯网络科技股份有限公司 All Rights Reserved<br />琼ICP备05064625号</p>
   </div>
 </template>
 

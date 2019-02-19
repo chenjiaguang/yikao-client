@@ -84,7 +84,7 @@
       </div>
       <div class="form-box">
         <div class="required-title clearfix"><i class="ykfont yk-required fl"></i><span class="fl">证件类型：</span></div>
-        <el-select v-model="form.cardtype.value" placeholder="请选择民族" class="select-picker" @change="value => pickerChange('cardtype', value)">
+        <el-select v-model="form.cardtype.value" placeholder="请选择证件类型" class="select-picker" @change="value => pickerChange('cardtype', value)">
           <el-option
             v-for="item in cardtypes"
             :key="item"
@@ -247,7 +247,7 @@
     <div class="bottom-buttons">
       <div class="state-text clearfix">
         <i class="ykfont yk-warning fl"></i>
-        <div class="warining-text fl">凡报考演唱演奏2级或以上的，均需上传同专业上一级别证书</div>
+        <div class="warining-text fl">报名信息一旦提交，不可再进行修改</div>
       </div>
       <div class="buttons-box clearfix">
         <div class="save-button cursor-pointer fl">保存</div>
@@ -295,6 +295,8 @@ for (let j = 0; j < 13; j++) {
 export default {
   data () {
     return {
+      exam_id: '',
+      submitting: false,
       roles: globalConstant.roles,
       userRole: '0',
       defaultAvatar: defaultAvatar,
@@ -491,7 +493,9 @@ export default {
       }
     }
   },
-  mounted () {
+  activated () {
+    console.log(this.$route.query.id)
+    this.exam_id = this.$route.query.id
     this.getOptions()
   },
   methods: {
@@ -807,22 +811,66 @@ export default {
           }
         }
       }
-      return valid
+      if (valid) {
+        let formData = {}
+        formData.exam_id = this.data.exam_id
+        formData.picture_id = this.data.form.avatar.id
+        formData.name = this.data.form.name.value
+        formData.pinyin = this.data.form.pinyin.value
+        formData.sex = this.data.genderText[this.data.form.gender.value]
+        formData.birth = this.data.form.birthday.value
+        formData.nationality = this.data.form.nationality.value
+        formData.nation = this.data.form.volk.value
+        formData.id_type = this.data.form.cardtype.value
+        formData.id_number = this.data.form.cardnumber.value
+        formData.phone = this.data.form.phone.value
+        formData.domain = this.data.form.major.value
+        formData.level = this.data.form.level.value
+        formData.continuous_level = this.data.form.continuity.text
+        formData.lately_credential = this.data.form.lastgetcertificate.year.value + ',' + this.data.form.lastgetcertificate.month.value + ',' + this.data.form.major.value + this.data.form.level.value.replace('级', '')
+        formData.pro_certificate_id = this.data.form.majorcertificate.id
+        formData.basic_certificate_id = this.data.form.basicmusiccertificate.id
+        formData.track_one = this.data.form.bent1.value
+        formData.track_two = this.data.form.bent2.value
+        formData.track_three = this.data.form.bent3.value
+        formData.track_four = this.data.form.bent4.value
+        formData.track_five = this.data.form.bent5.value
+        formData.preparer = this.data.form.fillter.value
+        formData.adviser = this.data.form.teacher.value
+        formData.adviser_phone = this.data.form.teacherphone.value
+        return formData
+      } else {
+        return valid
+      }
     },
     submitTap: function () {
-      let valid = this.testFormData()
-      if (valid) { // 数据填写完毕
-        let { roles, userRole } = this
-        if (userRole.toString() === roles.teacher || userRole.toString() === roles.institution) { // 老师或机构,直接成功，无需审核、支付
-          this.$router.replace({ path: '/enroll/detail' })
+      let formData = this.testFormData()
+      if (formData) { // 数据填写完毕
+        if (this.submitting) { // 正在提交
+          this.$toast('正在提交...')
           return false
         }
-        console.log('this.form.majorcertificate', this.form.majorcertificate, this.form.basicmusiccertificate)
-        if ((this.form.majorcertificate.required && this.form.majorcertificate.valid) || (this.form.basicmusiccertificate.required && this.form.basicmusiccertificate.valid)) { // 需上传基本乐科证书或者专业证书，需审核
-          this.$router.replace({ path: '/enroll/applysuccess' })
-        } else {
-          this.$router.replace({ path: '/enroll/detail' })
-        }
+        this.submitting = true
+        this.$ajax('/apply/add', { data: formData }).then(res => {
+          if (res && res.data && !res.error) { // 提交表单成功
+            this.submitSuccess(formData.exam_id)
+          }
+        }).catch(err => {
+          console.log('err', err)
+          this.submitting = false
+        })
+      }
+    },
+    submitSuccess: function (id) {
+      let { roles, userRole } = this
+      if (userRole.toString() === roles.teacher || userRole.toString() === roles.institution) { // 老师或机构,直接成功，无需审核、支付
+        this.$router.replace({ path: '/enroll/detail?id=' + id })
+        return false
+      }
+      if ((this.form.majorcertificate.required && this.form.majorcertificate.valid) || (this.form.basicmusiccertificate.required && this.form.basicmusiccertificate.valid)) { // 需上传基本乐科证书或者专业证书，需审核
+        this.$router.replace({ path: '/enroll/applysuccess?id=' + id })
+      } else {
+        this.$router.replace({ path: '/enroll/detail?id=' + id })
       }
     }
   }
