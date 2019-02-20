@@ -40,11 +40,11 @@
         <div class="required-title fl clearfix"><i class="ykfont yk-required fl"></i><span class="fl">性别：</span></div>
         <label class="gender-label cursor-pointer fl clearfix">
           <input type="radio" class="gender-radio cursor-pointer fl" value="1" v-model="form.gender.value" @change="genderChange" />
-          <span class="fl">男</span>
+          <span class="fl">{{genderText['1']}}</span>
         </label>
         <label class="gender-label cursor-pointer fl clearfix">
           <input type="radio" class="gender-radio cursor-pointer fl" value="2" v-model="form.gender.value" @change="genderChange" />
-          <span class="fl">女</span>
+          <span class="fl">{{genderText['2']}}</span>
         </label>
       </div>
       <div class="form-box">
@@ -207,7 +207,7 @@
         </div>
         <div class="state-text clearfix" style="margin-top:10px;">
           <i class="ykfont yk-warning fl"></i>
-          <div class="warining-text fl">演唱演奏3~5级必须上传一级基本乐科证书；6~9级必须上传 二级基本乐科证书；10级或以上必须上传三级基本乐科证书</div>
+          <div class="warining-text fl">报考演唱演奏3~5级必须上传一级基本乐科证书，6~9级必须上传 二级基本乐科证书，10级或以上必须上传三级基本乐科证书；报考基本乐科2~6级，需上传上一级别证书，选择连考的考生上传最近一次获得的乐科证书即可</div>
         </div>
       </div>
       <div class="form-box">
@@ -250,7 +250,7 @@
         <div class="warining-text fl">报名信息一旦提交，不可再进行修改</div>
       </div>
       <div class="buttons-box clearfix">
-        <div class="save-button cursor-pointer fl">保存</div>
+        <div class="save-button cursor-pointer fl" @click.stop="saveForm">保存</div>
         <div class="submit-button cursor-pointer fr" @click.stop="submitTap">提交</div>
       </div>
     </div>
@@ -300,6 +300,10 @@ export default {
       roles: globalConstant.roles,
       userRole: '0',
       defaultAvatar: defaultAvatar,
+      genderText: {
+        1: '男',
+        2: '女'
+      },
       nationalitys: [],
       volks: [],
       cardtypes: [],
@@ -497,6 +501,7 @@ export default {
     console.log(this.$route.query.id)
     this.exam_id = this.$route.query.id
     this.getOptions()
+    this.getForm()
   },
   methods: {
     getOptions: function () {
@@ -586,19 +591,19 @@ export default {
         if (type === 'avatar') {
           this.form.avatar.uploadTip = ''
           this.form.avatar.uploading = false
-          this.form.avatar.id = res.data.imageId
+          this.form.avatar.id = res.data.id[0]
           this.form.avatar.valid = true
           // this.form.avatar.url = res.data.url
         } else if (type === 'majorcertificate') {
           this.form.majorcertificate.uploadTip = ''
           this.form.majorcertificate.uploading = false
-          this.form.majorcertificate.id = res.data.imageId
+          this.form.majorcertificate.id = res.data.id[0]
           this.form.majorcertificate.valid = true
           // this.form.majorcertificate.url = res.data.url
         } else if (type === 'basicmusiccertificate') {
           this.form.basicmusiccertificate.uploadTip = ''
           this.form.basicmusiccertificate.uploading = false
-          this.form.basicmusiccertificate.id = res.data.imageId
+          this.form.basicmusiccertificate.id = res.data.id[0]
           this.form.basicmusiccertificate.valid = true
           // this.form.basicmusiccertificate.url = res.data.url
         }
@@ -779,7 +784,7 @@ export default {
       console.log('genderChange', value)
       this.form.gender.valid = Boolean(value)
     },
-    testFormData: function () {
+    validateFormData: function () {
       let form = JSON.parse(JSON.stringify(this.form))
       let valid = true
       for (let key in form) {
@@ -813,38 +818,89 @@ export default {
       }
       if (valid) {
         let formData = {}
-        formData.exam_id = this.data.exam_id
-        formData.picture_id = this.data.form.avatar.id
-        formData.name = this.data.form.name.value
-        formData.pinyin = this.data.form.pinyin.value
-        formData.sex = this.data.genderText[this.data.form.gender.value]
-        formData.birth = this.data.form.birthday.value
-        formData.nationality = this.data.form.nationality.value
-        formData.nation = this.data.form.volk.value
-        formData.id_type = this.data.form.cardtype.value
-        formData.id_number = this.data.form.cardnumber.value
-        formData.phone = this.data.form.phone.value
-        formData.domain = this.data.form.major.value
-        formData.level = this.data.form.level.value
-        formData.continuous_level = this.data.form.continuity.text
-        formData.lately_credential = this.data.form.lastgetcertificate.year.value + ',' + this.data.form.lastgetcertificate.month.value + ',' + this.data.form.major.value + this.data.form.level.value.replace('级', '')
-        formData.pro_certificate_id = this.data.form.majorcertificate.id
-        formData.basic_certificate_id = this.data.form.basicmusiccertificate.id
-        formData.track_one = this.data.form.bent1.value
-        formData.track_two = this.data.form.bent2.value
-        formData.track_three = this.data.form.bent3.value
-        formData.track_four = this.data.form.bent4.value
-        formData.track_five = this.data.form.bent5.value
-        formData.preparer = this.data.form.fillter.value
-        formData.adviser = this.data.form.teacher.value
-        formData.adviser_phone = this.data.form.teacherphone.value
+        formData.exam_id = this.exam_id
+        formData.picture_id = this.form.avatar.id
+        formData.name = this.form.name.value
+        formData.pinyin = this.form.pinyin.value
+        formData.sex = this.genderText[this.form.gender.value]
+        formData.birth = this.form.birthday.value
+        formData.nationality = this.form.nationality.value
+        formData.nation = this.form.volk.value
+        formData.id_type = this.form.cardtype.value
+        formData.id_number = this.form.cardnumber.value
+        formData.phone = this.form.phone.value
+        formData.domain = this.form.major.value
+        formData.level = this.form.level.value
+        formData.continuous_level = this.form.continuity.text
+        formData.lately_credential = (this.form.lastgetcertificate.year.value === 'none' && this.form.lastgetcertificate.month.value === 'none') ? '' : (this.form.lastgetcertificate.year.value + ',' + this.form.lastgetcertificate.month.value + ',' + this.form.major.value + ',' + this.form.level.value.replace('级', ''))
+        formData.pro_certificate_id = this.form.majorcertificate.id
+        formData.basic_certificate_id = this.form.basicmusiccertificate.id
+        formData.track_one = this.form.bent1.value
+        formData.track_two = this.form.bent2.value
+        formData.track_three = this.form.bent3.value
+        formData.track_four = this.form.bent4.value
+        formData.track_five = this.form.bent5.value
+        formData.preparer = this.form.fillter.value
+        formData.adviser = this.form.teacher.value
+        formData.adviser_phone = this.form.teacherphone.value
         return formData
       } else {
         return valid
       }
     },
+    saveForm: function () {
+      let {
+        form,
+        levels,
+        continuitys
+      } = this
+      let _form = JSON.parse(JSON.stringify(form))
+      let _levels = JSON.parse(JSON.stringify(levels))
+      let _continuitys = JSON.parse(JSON.stringify(continuitys))
+      let applyForm = {}
+      for (let key1 in _form) {
+        if (key1 === 'avatar' || key1 === 'majorcertificate' || key1 === 'basicmusiccertificate' || key1 === 'major' || key1 === 'level' || key1 === 'lastgetcertificate' || key1 === 'continuity') {
+          continue
+        }
+        applyForm[key1] = {}
+        for (let key2 in _form[key1]) {
+          if (key2 === 'required' || key2 === 'valid' || key2 === 'value' || key2 === 'idx' || key2 === 'id' || key2 === 'text' || key2 === 'url' || key2 === 'month' || key2 === 'year') {
+            applyForm[key1][key2] = _form[key1][key2]
+          }
+        }
+      }
+      applyForm = JSON.stringify(applyForm)
+      window.localStorage.applyForm = applyForm
+      window.localStorage.applyFormOptions = JSON.stringify({
+        levels: _levels,
+        continuitys: _continuitys
+      })
+      this.$toast('保存成功')
+    },
+    getForm: function () {
+      let applyForm = window.localStorage.applyForm ? JSON.parse(window.localStorage.applyForm) : {}
+      let applyFormOptions = window.localStorage.applyFormOptions ? JSON.parse(window.localStorage.applyFormOptions) : {}
+      let {
+        form
+      } = this
+      let _form = JSON.parse(JSON.stringify(form))
+      let {
+        levels,
+        continuitys
+      } = applyFormOptions
+      let newForm = {}
+      for (let key in _form) {
+        newForm[key] = Object.assign({}, _form[key], applyForm[key])
+      }
+      console.log('getForm', _form, newForm)
+      if (applyForm) {
+        this.form = newForm
+        this.levels = levels || []
+        this.continuitys = continuitys || []
+      }
+    },
     submitTap: function () {
-      let formData = this.testFormData()
+      let formData = this.validateFormData()
       if (formData) { // 数据填写完毕
         if (this.submitting) { // 正在提交
           this.$toast('正在提交...')
