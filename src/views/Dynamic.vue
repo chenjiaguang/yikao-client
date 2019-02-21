@@ -7,7 +7,7 @@
       <div class="dynamic-main clearfix">
         <div class="main-left fl">
           <div class="cate-box" v-if="leftCates && leftCates.name && leftCates.id">
-            <block-head :title="leftCates.name" />
+            <block-head :title="leftCates.name" :hide-btn="true" />
             <div class="cate-dynamic-box">
               <dynamic v-for="dynamic in leftCates.list" :key="dynamic.id" :dynamic="dynamic" />
             </div>
@@ -18,20 +18,23 @@
             </div>
           </div>
         </div>
-        <div class="main-right fr">
-          <div v-for="(rightCate, rightIdx) in rightCates" :key="rightCate.id" class="cate-box">
-            <block-head :title="rightCate.name" />
-            <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
-              <template v-if="rightIdx === 0">
-                <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
-              </template>
-              <template v-else>
-                <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
-                  <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
-                </div>
-              </template>
+        <div v-if="rightCates.length" class="main-right fr">
+          <template v-for="(rightCate, rightIdx) in rightCates">
+            <!-- 相关的类别list存在数据时才展示，v-if判断 -->
+            <div :key="rightCate.id" v-if="rightCate.list && rightCate.list.length" class="cate-box">
+              <block-head :title="rightCate.name" :hide-btn="!Boolean(categoryRoute[rightCate.id.toString()])" @blockClick="ele => blockClick(rightCate.id, ele)" />
+              <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
+                <template v-if="rightIdx === 0">
+                  <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
+                </template>
+                <template v-else>
+                  <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
+                    <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
+                  </div>
+                </template>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -52,6 +55,13 @@ import Pagination from '../components/Pagination'
 export default {
   data () {
     return {
+      categoryRoute: {
+        1: '/dynamic',
+        2: '/training',
+        3: '/perform',
+        4: '/race',
+        5: '/book'
+      },
       subNavs: [{ name: 'Home', label: '海南考区', link: '/' }, { name: 'Dynamic', label: '考级动态', link: '/dynamic' }],
       leftCates: {},
       rightCates: [],
@@ -64,6 +74,11 @@ export default {
     this.fetchCates(1)
   },
   methods: {
+    blockClick: function (id, ele) {
+      if (ele === 'btn' && this.categoryRoute[id.toString()]) { // 点击了更多按钮 且 有对应的路由
+        this.$router.replace({ path: this.categoryRoute[id.toString()] })
+      }
+    },
     fetchCates: function (pn) {
       console.log('fetchCates', pn)
       if (this.loading) {

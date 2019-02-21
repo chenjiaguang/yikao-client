@@ -16,8 +16,8 @@
       <div class="result-head">考级信息</div>
       <div v-if="result && result[0]" class="result-box">
         <div v-for="enroll in result" :key="enroll.id" class="result-item clearfix">
-          <div class="name fl">{{enroll.name}}</div>
-          <div class="more fr cursor-pointer" @click.stop="seeMore(enroll.id)">查看</div>
+          <div class="name fl">{{enroll.domain}}{{enroll.class}}级</div>
+          <div class="more fr cursor-pointer" @click.stop="seeMore(enroll)">查看</div>
         </div>
       </div>
       <div v-else class="empty-tip">暂无信息~</div>
@@ -46,25 +46,45 @@ export default {
   methods: {
     requestList: function () {
       console.log('filters', this.filters)
+      let { name, cardNumber } = this.filters
+      if (!name) {
+        this.$toast('请输入姓名')
+        return false
+      } else if (!cardNumber) {
+        this.$toast('请输入身份证号')
+        return false
+      }
+      let rData = {
+        name: name,
+        id_card: cardNumber
+      }
       this.loading = true
-      setTimeout(() => {
+      this.$ajax('/search/grade', { data: rData }).then(res => {
         this.loading = false
         this.loaded = true
-        this.result = [
-          {
-            id: '1',
-            name: '中国民族民间舞1级'
-          },
-          {
-            id: '2',
-            name: '中国民族民间舞2级'
+        console.log('/search/grade', res)
+        if (res && res.error.toString() === '0') { // 获取数据成功
+          if (res.data) {
+            this.result = res.data
+            if (!res.data[0]) {
+              this.$toast('未查询到该考生成绩信息')
+            }
+          } else {
+            this.$toast('未查询到该考生信息')
           }
-        ]
-      }, 500)
+        }
+        if (res && res.error && res.error.toString() !== '0') {
+          if (res.msg) {
+            this.$toast(res.msg)
+          }
+        }
+      }).catch(err => {
+        this.loading = false
+        console.log('获取成绩失败', err)
+      })
     },
-    seeMore: function (id) {
-      console.log('seeMore', id)
-      this.$router.push({ path: '/enroll/scoreresult', query: { id } })
+    seeMore: function (enroll) {
+      this.$router.push({ name: 'ScoreResult', params: { enroll } })
     }
   }
 }

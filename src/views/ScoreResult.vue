@@ -54,8 +54,10 @@
 
 <script>
 import Seal2 from '../components/Seal2'
+import mixin from '../lib/mixins'
 
 export default {
+  mixins: [mixin],
   data () {
     return {
       pass: true,
@@ -64,23 +66,27 @@ export default {
     }
   },
   components: { Seal2 },
-  mounted () {
+  activated () {
     this.requestInfo()
   },
   methods: {
     requestInfo: function () {
-      this.userInfo = {
-        name: '张三',
-        nationality: '中国',
-        volk: '汉族',
-        cardNumber: '460027199905069889'
-      }
-      this.examInfo = {
-        institution: '中国音乐学院',
-        major: '钢琴',
-        level: '一级',
-        time: '2019年01月23日',
-        certificateNum: ''
+      let { enroll } = this.$route.params
+      if (enroll) {
+        this.userInfo = {
+          name: enroll.name,
+          nationality: enroll.nationality,
+          volk: enroll.nation,
+          cardNumber: enroll.id_number
+        }
+        this.examInfo = {
+          institution: enroll.organ_name,
+          major: enroll.domain,
+          level: enroll.class,
+          time: enroll.issue_date,
+          certificateNum: enroll.certificate_number
+        }
+        this.pass = Boolean(enroll.certificate_number)
       }
     }
   }

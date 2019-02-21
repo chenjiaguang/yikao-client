@@ -20,6 +20,7 @@ const EnrollDetail = () => import('./views/EnrollDetail.vue')
 const ScoreResult = () => import('./views/ScoreResult.vue')
 const DynamicDetail = () => import('./views/DynamicDetail.vue')
 const MiniappDynamicDetail = () => import('./views/MiniappDynamicDetail.vue')
+const MiniappMessageDetail = () => import('./views/MiniappMessageDetail.vue')
 
 Vue.use(Router)
 
@@ -207,6 +208,15 @@ const router = new Router({
       path: '/miniappdynamic',
       name: 'MiniappDynamicDetail',
       component: MiniappDynamicDetail,
+      meta: {
+        requiredLogin: false,
+        title: '社会艺术等级考试-海南考区'
+      }
+    },
+    {
+      path: '/miniappmessage',
+      name: 'MiniappMessageDetail',
+      component: MiniappMessageDetail,
       meta: {
         requiredLogin: false,
         title: '社会艺术等级考试-海南考区'

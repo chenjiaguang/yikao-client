@@ -7,7 +7,7 @@
       <div v-if="cate && cate.name && cate.id" class="cate-box">
         <block-head title="艺术团表演" :hide-btn="true" />
         <div class="perform-box clearfix">
-          <div v-for="(perform, idx) in cate.performs" :key="perform.id" class="perform-item fl" :class="{'list-left': idx % 3 === 0}">
+          <div v-for="(perform, idx) in cate.list" :key="perform.id" class="perform-item fl" :class="{'list-left': idx % 3 === 0}">
             <perform :perform="perform" />
           </div>
         </div>
@@ -57,6 +57,7 @@ export default {
       this.loading = true
       this.$ajax('/msg/category3', { data: rData }).then(res => {
         this.loading = false
+        console.log('/msg/category3', res)
         if (res && !res.error) {
           this.cate = res.data.leftCates
           this.page = res.data.page

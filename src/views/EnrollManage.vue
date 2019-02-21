@@ -115,7 +115,8 @@ export default {
       ]
     }
   },
-  mounted () {
+  activated () {
+    this.userRole = window.localStorage.userType ? window.localStorage.userType.toString() : '0'
     this.getOptions()
   },
   methods: {

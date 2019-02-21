@@ -22,27 +22,33 @@
       <!-- 主要内容(分类) -->
       <div class="home-main clearfix">
         <div class="main-left fl">
-          <div v-for="leftCate in leftCates" :key="leftCate.id" class="cate-box">
-            <block-head :title="leftCate.name" @blockClick="ele => blockClick(leftCate.id, ele)" />
-            <div class="cate-dynamic-box">
-              <dynamic v-for="dynamic in leftCate.list" :key="dynamic.id" :dynamic="dynamic" />
+          <template v-for="leftCate in leftCates">
+            <!-- 相关的类别list存在数据时才展示，v-if判断 -->
+            <div :key="leftCate.id" v-if="leftCate.list && leftCate.list.length" class="cate-box">
+              <block-head :title="leftCate.name" :hide-btn="!Boolean(categoryRoute[leftCate.id.toString()])" @blockClick="ele => blockClick(leftCate.id, ele)" />
+              <div class="cate-dynamic-box">
+                <dynamic v-for="dynamic in leftCate.list" :key="dynamic.id" :dynamic="dynamic" />
+              </div>
             </div>
-          </div>
+          </template>
         </div>
         <div class="main-right fr">
-          <div v-for="(rightCate, rightIdx) in rightCates" :key="rightCate.id" class="cate-box">
-            <block-head :title="rightCate.name" @blockClick="ele => blockClick(rightCate.id, ele)" />
-            <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
-              <template v-if="rightIdx === 0">
-                <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
-              </template>
-              <template v-else>
-                <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
-                  <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
-                </div>
-              </template>
+          <template v-for="(rightCate, rightIdx) in rightCates">
+            <!-- 相关的类别list存在数据时才展示，v-if判断 -->
+            <div :key="rightCate.id" v-if="rightCate.list && rightCate.list.length" class="cate-box">
+              <block-head :title="rightCate.name" :hide-btn="!Boolean(categoryRoute[rightCate.id.toString()])" @blockClick="ele => blockClick(rightCate.id, ele)" />
+              <div class="cate-dynamic-box" :class="{clearfix: rightIdx !== 0}">
+                <template v-if="rightIdx === 0">
+                  <dynamic v-for="dynamic in rightCate.list" :key="dynamic.id" :dynamic="dynamic" mode="2" />
+                </template>
+                <template v-else>
+                  <div v-for="(dynamic, dynamicIdx) in rightCate.list" :key="dynamic.id" class="cate-dynamic-content mode3" :class="{fl: (dynamicIdx % 2) === 0, fr: (dynamicIdx % 2) !== 0}">
+                    <dynamic :dynamic="dynamic" :mode="rightIdx === 0 ? '2' : '3'" />
+                  </div>
+                </template>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -63,6 +69,13 @@ export default {
   mixins: [mixin],
   data () {
     return {
+      categoryRoute: {
+        1: '/dynamic',
+        2: '/training',
+        3: '/perform',
+        4: '/race',
+        5: '/book'
+      },
       entry: [
         {
           name: '',
@@ -96,19 +109,8 @@ export default {
       }
     },
     blockClick: function (id, ele) {
-      if (ele === 'btn') {
-        // 点击了更多按钮
-        if (id.toString() === '1') { // 考级动态
-          this.$router.replace({ path: '/dynamic' })
-        } else if (id.toString() === '2') { // 师资培训
-          this.$router.replace({ path: '/training' })
-        } else if (id.toString() === '3') { // 艺术团表演
-          this.$router.replace({ path: '/perform' })
-        } else if (id.toString() === '4') { // 大赛动态
-          this.$router.replace({ path: '/race' })
-        } else if (id.toString() === '5') { // 考级教材
-          this.$router.replace({ path: '/book' })
-        }
+      if (ele === 'btn' && this.categoryRoute[id.toString()]) { // 点击了更多按钮 且 有对应的路由
+        this.$router.replace({ path: this.categoryRoute[id.toString()] })
       }
     },
     fetchData: function () {
